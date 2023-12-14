@@ -1,5 +1,3 @@
-# DPS-CodingChallenge
-
 # Time Series Prediction of Alcohol-Related Traffic Accidents in Munich, Germany
 
 ## Project Overview
