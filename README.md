@@ -1,20 +1,63 @@
-# Time Series Prediction of Alcohol-Related Traffic Accidents in Munich, Germany
+# SARIMA Forecasting Model API
 
-## Project Overview
-The city of Munich has released a dataset detailing the monthly traffic accidents categorized by type, starting from the year 2000. This project focuses on analyzing two specific categories: 'Alkoholunfälle' (alcohol-related accidents) and 'Fluchtunfälle' (hit-and-run accidents), as well as the overall volume of traffic incidents. The primary objective is to construct a regression model capable of forecasting future alcohol-related accidents.
+This repository contains the code and model for a SARIMA (Seasonal AutoRegressive Integrated Moving Average) forecasting model, packaged in a Flask application, and containerized with Docker for easy deployment. The application provides an HTTP API endpoint that allows users to get predictions from the SARIMA model.
 
-## Historical Visualization and Analysis
-An initial step in the project was to historically visualize the frequency of accidents and to examine correlations between the different categories. 
+## Project Structure
 
-## Model Development
-Two simple models were developed, with the year, month, and quarter as input features. Given the number of data points and the simplicity of the features, the models struggled to accurately capture the underlying patterns and predict future incidents effectively. Machine learning is an iterative process that requires repeated experimentation with various methods to optimize results.
-There are still many ways how the outcomes could be improved, here some to name a few:
+- `ARIMA-dps.ipynb`: Jupyter notebook with the model creation and evaluation process.
+- `df_train.csv`: The dataset used for training the SARIMA model.
+- `Dockerfile`: Instructions for Docker on how to build the image.
+- `.dockerignore`: Specifies to Docker which files should be ignored in the build process.
+- `inference.py`: The Flask application providing the API endpoint.
+- `requirements.txt`: A list of Python dependencies necessary to run the Flask app.
+- `sarima.pkl`: The serialized SARIMA model ready for predictions.
+- `test_point.csv`: An example of a data point to test the API.
 
-- **Additional Features:** Introducing more variables may improve performance. This could include using other categories of traffic accidents.
-  
-- **Experimenting with Different Models:** Neural networks, may be able to detect more complex patterns within the data. 
+## How to Use
 
-- **Time Series Forecasting with ARIMA:** ARIMA models are popular for their effectiveness in time series forecasting. Given additional time, exploring ARIMA would be a logical progression for this project. 
+### Running Locally
 
-As machine learning is an interative proceess of continous learning, this project represents a snapshot of an ongoing journey rather than a final destination.
+To run the SARIMA model API locally, you will need to have Python and the necessary packages installed. You can install the required packages with:
+
+```bash
+pip install -r requirements.txt
+```
+
+Then you can run the Flask application:
+```bash
+python inference.py
+```
+
+The application will start on `http://localhost:8080
+
+### Using the API
+
+To get a prediction from the API, send a POST request to `http://localhost:8080/invocations` with the following JSON payload:
+
+```json
+{
+  "year": 2024,
+  "month": 1
+}
+```
+The Dockerfile in the repository allows you to build a Docker image of the application. To build the image, run:
+```bash
+docker build -t sarima-app .
+```
+
+Once the image is built, you can run a container:
+```bash
+docker run -p 8080:8080 sarima-app
+```
+
+This application is designed to be deployed on AWS using Amazon ECS. 
+
+
+### Historical Analysis
+The project began with a visualization and analysis to understand the trends and correlations among different categories of traffic accidents. 
+
+### Model Development Insights
+The initial approach involved developing a simple XGBOOST model, which did not perform well. It became clear that a decision tree-based approach would not be able to predict future values while only having past dates as features. An alternative could have been to use data from the past 12 months as features to predict the following month, then use these predictions as features for subsequent forecasts.
+
+However, the decision was made to explore SARIMA models. This presented an opportunity to learn about these models which are popular to predict future data points in a sequence. SARIMA models account for seasonality, trends, and noise in the data, making them a more suitable choice for this type of prediction.
 
